@@ -6,6 +6,7 @@ const { initDB } = require('./db');
 const customersRouter = require('./routes/customers');
 const campaignsRouter = require('./routes/campaigns');
 const receiptsRouter = require('./routes/receipts');
+const chatRouter = require('./routes/chat');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -20,6 +21,7 @@ app.get('/health', (req, res) => {
 app.use('/api/customers', customersRouter);
 app.use('/api/campaigns', campaignsRouter);
 app.use('/api/receipts', receiptsRouter);
+app.use('/api', chatRouter);
 
 async function start() {
   try {
