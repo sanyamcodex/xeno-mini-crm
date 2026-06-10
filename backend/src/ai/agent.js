@@ -33,7 +33,27 @@ async function runAgent(userMessage, conversationHistory = []) {
   });
 
   const toolsUsed = [];
-  let result = await chat.sendMessage(userMessage);
+  let result;
+
+  try {
+    result = await chat.sendMessage(userMessage);
+  } catch (error) {
+    console.error('Gemini request failed:', error);
+
+    if (error.status === 429) {
+      return {
+        reply:
+          'Gemini API quota is exhausted for this key/project. The CRM backend and database are running, but Maya needs a Gemini API key with available quota before she can answer.',
+        toolsUsed
+      };
+    }
+
+    return {
+      reply:
+        'Gemini is currently unreachable from the backend. Please check the API key, quota, and network access, then try again.',
+      toolsUsed
+    };
+  }
 
   for (let step = 0; step < 5; step += 1) {
     const calls = result.response.functionCalls() || [];
@@ -59,7 +79,25 @@ async function runAgent(userMessage, conversationHistory = []) {
       });
     }
 
-    result = await chat.sendMessage(functionResponses);
+    try {
+      result = await chat.sendMessage(functionResponses);
+    } catch (error) {
+      console.error('Gemini tool response failed:', error);
+
+      if (error.status === 429) {
+        return {
+          reply:
+            'Gemini API quota ran out while using CRM tools. The tool call completed locally, but Maya needs available Gemini quota to finish the response.',
+          toolsUsed
+        };
+      }
+
+      return {
+        reply:
+          'Maya used the CRM tools, but Gemini could not finish the response. Please check the API key, quota, and network access.',
+        toolsUsed
+      };
+    }
   }
 
   return {
