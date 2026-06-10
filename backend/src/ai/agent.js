@@ -13,6 +13,32 @@ function toGeminiHistory(conversationHistory = []) {
     }));
 }
 
+function sanitizeHistory(history = []) {
+  if (!Array.isArray(history) || history.length === 0) {
+    return [];
+  }
+
+  const firstUserIdx = history.findIndex((entry) => entry && entry.role === 'user');
+  if (firstUserIdx === -1) {
+    return [];
+  }
+
+  const trimmed = history.slice(firstUserIdx);
+  const cleaned = [];
+
+  for (const entry of trimmed) {
+    if (!entry || !entry.role) {
+      continue;
+    }
+
+    if (cleaned.length === 0 || cleaned[cleaned.length - 1].role !== entry.role) {
+      cleaned.push(entry);
+    }
+  }
+
+  return cleaned;
+}
+
 async function runAgent(userMessage, conversationHistory = []) {
   if (!process.env.GEMINI_API_KEY) {
     return {
@@ -23,13 +49,20 @@ async function runAgent(userMessage, conversationHistory = []) {
 
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   const model = genAI.getGenerativeModel({
-    model: 'gemini-2.0-flash',
+    model: 'gemini-2.5-flash',
+    generationConfig: {
+      temperature: 0.7,
+      maxOutputTokens: 1024
+    },
     systemInstruction,
     tools: [{ functionDeclarations }]
   });
 
+  const geminiHistory = toGeminiHistory(conversationHistory);
+  const sanitizedHistory = sanitizeHistory(geminiHistory);
+
   const chat = model.startChat({
-    history: toGeminiHistory(conversationHistory)
+    history: sanitizedHistory
   });
 
   const toolsUsed = [];
