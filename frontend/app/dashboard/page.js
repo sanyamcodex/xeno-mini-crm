@@ -108,7 +108,7 @@ export default function DashboardPage() {
 
   return (
     <main className="min-h-screen bg-[#080810] text-white">
-      <div className="animate-fadeIn">
+      <div className="animate-fadeIn pt-8">
         <Navbar />
 
       <section className="mx-auto flex max-w-7xl flex-col gap-8 px-4 pt-16 py-8 sm:px-6 lg:px-8">
