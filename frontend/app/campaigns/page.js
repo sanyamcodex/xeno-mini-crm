@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import CampaignCard from '../../components/CampaignCard';
 import Navbar from '../../components/Navbar';
 import StatsBanner from '../../components/StatsBanner';
@@ -27,19 +27,23 @@ export default function CampaignsPage() {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const campaignsRef = useRef([]);
 
   useEffect(() => {
     let active = true;
-    let intervalId = null;
 
     async function loadCampaigns() {
       try {
         const data = await getCampaigns();
 
-        if (active) {
-          setCampaigns(Array.isArray(data) ? data : []);
-          setError('');
+        if (!active) {
+          return;
         }
+
+        const nextCampaigns = Array.isArray(data) ? data : [];
+        campaignsRef.current = nextCampaigns;
+        setCampaigns(nextCampaigns);
+        setError('');
       } catch (err) {
         if (active) {
           setError('Unable to connect to backend');
@@ -53,14 +57,10 @@ export default function CampaignsPage() {
 
     loadCampaigns();
 
-    intervalId = setInterval(() => {
-      setCampaigns((current) => {
-        if (current.some((campaign) => campaign.status === 'running')) {
-          loadCampaigns();
-        }
-
-        return current;
-      });
+    const intervalId = setInterval(() => {
+      if (campaignsRef.current.some((campaign) => campaign.status === 'running')) {
+        loadCampaigns();
+      }
     }, 10000);
 
     return () => {
@@ -92,11 +92,36 @@ export default function CampaignsPage() {
               <p className="mt-2 text-sm text-gray-400">Track StyleAura campaign delivery and engagement.</p>
             </div>
             <Link
-              href="/chat?message=Create%20a%20new%20campaign%20for%20StyleAura"
+              href="/chat?message=Create%20a%20new%20campaign%20for%20StyleAura%20with%20smart%20defaults%20for%20at-risk%20customers"
               className="inline-flex h-10 items-center justify-center rounded-xl bg-[#6366f1] px-4 text-sm font-semibold text-white transition hover:bg-indigo-500"
             >
               New Campaign
             </Link>
+          </div>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            {[
+              {
+                label: '🎯 Target At-Risk',
+                href: '/chat?message=Create%20a%20WhatsApp%20campaign%20for%20at-risk%20customers%20with%20a%20re-engagement%20offer'
+              },
+              {
+                label: '💤 Win Back Lapsed',
+                href: '/chat?message=Create%20a%20WhatsApp%20campaign%20for%20lapsed%20customers%20with%20a%20comeback%20discount'
+              },
+              {
+                label: '⭐ Reward Active',
+                href: '/chat?message=Create%20an%20email%20campaign%20for%20active%20customers%20with%20a%20loyalty%20reward'
+              }
+            ].map((chip) => (
+              <Link
+                key={chip.label}
+                href={chip.href}
+                className="inline-flex items-center rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-gray-100 transition hover:bg-white/10"
+              >
+                {chip.label}
+              </Link>
+            ))}
           </div>
 
           <div className="mt-6">

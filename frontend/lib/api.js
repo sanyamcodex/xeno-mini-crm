@@ -50,4 +50,7 @@ export async function getCustomerStats() {
   return parseResponse(response);
 }
 
-export const getDashboardStats = () => fetch(`${BASE}/api/customers/stats`).then(parseResponse);
+export const getDashboardStats = () =>
+  fetch(`${BASE}/api/customers/stats`, {
+    cache: 'no-store'
+  }).then(parseResponse);
