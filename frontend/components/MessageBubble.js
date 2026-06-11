@@ -1,15 +1,15 @@
 'use client';
 
 function toolLabel(tool) {
-  const labels = {
-    get_customer_stats: 'get_customer_stats',
-    get_customers: 'get_customers',
-    create_campaign: 'create_campaign',
-    launch_campaign: 'launch_campaign',
-    get_campaign_stats: 'get_campaign_stats'
+  const icons = {
+    get_customer_stats: '📊',
+    get_customers: '👥',
+    create_campaign: '✏️',
+    launch_campaign: '🚀',
+    get_campaign_stats: '📈'
   };
 
-  return labels[tool] || tool;
+  return `${icons[tool] || '✦'} ${tool}`;
 }
 
 export default function MessageBubble({ message }) {
@@ -29,21 +29,21 @@ export default function MessageBubble({ message }) {
 
       <div className={`max-w-[86%] sm:max-w-[72%] ${isUser ? 'items-end' : 'items-start'} flex flex-col`}>
         <div
-          className={`rounded-lg px-4 py-3 text-sm leading-6 shadow-sm ${
+          className={`rounded-2xl px-4 py-3 text-sm leading-6 shadow-sm ${
             isUser
               ? 'bg-[#6366f1] text-white'
-              : 'border border-white/10 bg-[#1a1a1a] text-[#e5e5e5]'
+              : 'border border-white/10 bg-white/5 text-[#e5e5e5] backdrop-blur'
           }`}
         >
           <p className="whitespace-pre-wrap break-words">{message.content}</p>
         </div>
 
         {message.toolsUsed?.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-2">
+          <div className="mt-2 inline-flex flex-wrap gap-1">
             {message.toolsUsed.map((tool, index) => (
               <span
                 key={`${tool}-${index}`}
-                className="rounded-full border border-[#6366f1]/40 bg-[#6366f1]/10 px-2.5 py-1 text-xs text-indigo-200"
+                className="rounded-full border border-indigo-800 bg-indigo-950 px-2 py-0.5 text-xs text-indigo-300"
               >
                 {toolLabel(tool)}
               </span>

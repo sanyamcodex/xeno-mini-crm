@@ -3,12 +3,13 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import CampaignCard from '../../components/CampaignCard';
+import Navbar from '../../components/Navbar';
 import StatsBanner from '../../components/StatsBanner';
 import { getCampaigns } from '../../lib/api';
 
 function CampaignSkeleton() {
   return (
-    <div className="rounded-lg border border-white/10 bg-[#1a1a1a] p-5">
+    <div className="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur">
       <div className="h-5 w-2/3 animate-pulse rounded bg-white/10" />
       <div className="mt-3 h-4 w-full animate-pulse rounded bg-white/10" />
       <div className="mt-2 h-4 w-1/2 animate-pulse rounded bg-white/10" />
@@ -22,37 +23,6 @@ function CampaignSkeleton() {
   );
 }
 
-function Sidebar() {
-  return (
-    <aside className="flex w-full shrink-0 flex-col border-b border-white/10 bg-[#111111] px-4 py-4 md:min-h-screen md:w-60 md:border-b-0 md:border-r md:px-5">
-      <div className="flex items-center justify-between md:block">
-        <div>
-          <div className="text-lg font-bold text-white">XenoCRM</div>
-          <div className="mt-0.5 text-xs text-zinc-500">StyleAura</div>
-        </div>
-        <div className="text-xs text-zinc-500 md:hidden">Powered by Gemini</div>
-      </div>
-
-      <nav className="mt-4 flex gap-2 md:mt-8 md:flex-col">
-        <Link
-          href="/chat"
-          className="rounded-md px-3 py-2 text-sm font-medium text-zinc-400 transition hover:bg-white/5 hover:text-zinc-100"
-        >
-          Chat
-        </Link>
-        <Link
-          href="/campaigns"
-          className="rounded-md bg-[#6366f1] px-3 py-2 text-sm font-medium text-white"
-        >
-          Campaigns
-        </Link>
-      </nav>
-
-      <div className="mt-auto hidden text-xs text-zinc-600 md:block">Powered by Gemini</div>
-    </aside>
-  );
-}
-
 export default function CampaignsPage() {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -60,13 +30,14 @@ export default function CampaignsPage() {
 
   useEffect(() => {
     let active = true;
+    let intervalId = null;
 
     async function loadCampaigns() {
       try {
         const data = await getCampaigns();
 
         if (active) {
-          setCampaigns(data);
+          setCampaigns(Array.isArray(data) ? data : []);
           setError('');
         }
       } catch (err) {
@@ -82,18 +53,26 @@ export default function CampaignsPage() {
 
     loadCampaigns();
 
+    intervalId = setInterval(() => {
+      setCampaigns((current) => {
+        if (current.some((campaign) => campaign.status === 'running')) {
+          loadCampaigns();
+        }
+
+        return current;
+      });
+    }, 10000);
+
     return () => {
       active = false;
+      clearInterval(intervalId);
     };
   }, []);
 
   const summary = useMemo(() => {
-    const totalSent = campaigns.reduce((sum, campaign) => sum + campaign.total_sent, 0);
-    const totalDelivered = campaigns.reduce((sum, campaign) => sum + campaign.total_delivered, 0);
-    const totalOpened = campaigns.reduce((sum, campaign) => sum + campaign.total_opened, 0);
-    const avgOpenRate = totalDelivered
-      ? Math.round((totalOpened / totalDelivered) * 100)
-      : 0;
+    const totalSent = campaigns.reduce((sum, campaign) => sum + Number(campaign.total_sent || 0), 0);
+    const totalOpened = campaigns.reduce((sum, campaign) => sum + Number(campaign.total_opened || 0), 0);
+    const avgOpenRate = totalSent ? Math.round((totalOpened / totalSent) * 100) : 0;
 
     return {
       totalCampaigns: campaigns.length,
@@ -103,18 +82,18 @@ export default function CampaignsPage() {
   }, [campaigns]);
 
   return (
-    <main className="flex min-h-screen flex-col bg-[#0f0f0f] md:flex-row">
-      <Sidebar />
-      <section className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-[#080810] text-white">
+      <Navbar />
+      <section className="px-4 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-semibold text-zinc-100">Campaigns</h1>
-              <p className="mt-1 text-sm text-zinc-500">Track StyleAura campaign delivery and engagement.</p>
+              <h1 className="text-3xl font-bold text-zinc-100">Campaigns</h1>
+              <p className="mt-2 text-sm text-gray-400">Track StyleAura campaign delivery and engagement.</p>
             </div>
             <Link
-              href="/chat?prompt=Create%20a%20new%20campaign%20for%20StyleAura"
-              className="inline-flex h-10 items-center justify-center rounded-md bg-[#6366f1] px-4 text-sm font-semibold text-white transition hover:bg-indigo-500"
+              href="/chat?message=Create%20a%20new%20campaign%20for%20StyleAura"
+              className="inline-flex h-10 items-center justify-center rounded-xl bg-[#6366f1] px-4 text-sm font-semibold text-white transition hover:bg-indigo-500"
             >
               New Campaign
             </Link>
@@ -142,11 +121,11 @@ export default function CampaignsPage() {
           </div>
 
           {!loading && !error && campaigns.length === 0 && (
-            <div className="mt-8 rounded-lg border border-dashed border-white/15 bg-[#1a1a1a] px-6 py-12 text-center">
+            <div className="mt-8 rounded-xl border border-dashed border-white/15 bg-white/5 px-6 py-12 text-center backdrop-blur">
               <p className="text-base font-medium text-zinc-200">No campaigns yet. Ask Maya to create one!</p>
               <Link
-                href="/chat?prompt=Create%20a%20WhatsApp%20campaign%20for%20lapsed%20customers"
-                className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-[#6366f1] px-4 text-sm font-semibold text-white transition hover:bg-indigo-500"
+                href="/chat?message=Create%20a%20WhatsApp%20campaign%20for%20lapsed%20customers"
+                className="mt-4 inline-flex h-10 items-center justify-center rounded-xl bg-[#6366f1] px-4 text-sm font-semibold text-white transition hover:bg-indigo-500"
               >
                 Open Chat
               </Link>
