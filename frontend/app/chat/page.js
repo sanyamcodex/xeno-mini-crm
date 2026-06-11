@@ -12,7 +12,7 @@ function ChatPageContent() {
   return (
     <main className="flex min-h-screen flex-col bg-[#080810]">
       <Navbar />
-      <div className="h-[calc(100vh-64px)] min-h-0 flex-1">
+      <div className="flex h-[calc(100vh-64px)] min-h-0 flex-1 flex-col">
         <ChatWindow initialPrompt={prompt} />
       </div>
     </main>

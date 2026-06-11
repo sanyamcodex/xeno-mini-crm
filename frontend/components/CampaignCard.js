@@ -3,22 +3,22 @@
 import { useState } from 'react';
 
 const channelStyles = {
-  whatsapp: 'border-emerald-400/30 bg-emerald-400/10 text-emerald-300',
-  sms: 'border-sky-400/30 bg-sky-400/10 text-sky-300',
-  email: 'border-[#6366f1]/30 bg-[#6366f1]/10 text-indigo-300'
+  whatsapp: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-300',
+  sms: 'border-blue-500/20 bg-blue-500/10 text-blue-300',
+  email: 'border-violet-500/20 bg-violet-500/10 text-violet-200'
 };
 
 const statusStyles = {
-  draft: 'bg-zinc-500',
+  draft: 'bg-gray-400',
   running: 'bg-emerald-400',
   completed: 'bg-indigo-400'
 };
 
 const funnelSteps = [
-  { key: 'total_sent', label: 'Sent', color: 'bg-blue-400' },
-  { key: 'total_delivered', label: 'Delivered', color: 'bg-green-400' },
-  { key: 'total_opened', label: 'Opened', color: 'bg-amber-400' },
-  { key: 'total_clicked', label: 'Clicked', color: 'bg-indigo-400' }
+  { key: 'total_sent', label: 'Sent', gradient: 'from-blue-500 to-blue-400' },
+  { key: 'total_delivered', label: 'Delivered', gradient: 'from-emerald-500 to-emerald-400' },
+  { key: 'total_opened', label: 'Opened', gradient: 'from-amber-500 to-amber-400' },
+  { key: 'total_clicked', label: 'Clicked', gradient: 'from-indigo-500 to-indigo-400' }
 ];
 
 function percent(value, total) {
@@ -46,9 +46,9 @@ function FunnelBar({ step, campaign, compact = false }) {
           {formatNumber(value)} · {rate}%
         </span>
       </div>
-      <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
+      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/5">
         <div
-          className={`h-full rounded-full ${step.color}`}
+          className={`h-full rounded-full bg-gradient-to-r ${step.gradient}`}
           style={{ width: `${Math.min(rate, 100)}%` }}
         />
       </div>
@@ -67,19 +67,19 @@ export default function CampaignCard({ campaign }) {
 
   return (
     <article
-      className="cursor-pointer rounded-xl border border-white/10 bg-white/5 p-5 shadow-2xl shadow-black/20 backdrop-blur transition hover:scale-[1.01]"
+      className="cursor-pointer rounded-2xl border border-white/6 bg-[#0f0f1a] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.05)] backdrop-blur-xl transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.01] hover:border-white/10 hover:shadow-[0_8px_32px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,255,255,0.1)]"
       onClick={() => setExpanded((current) => !current)}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="truncate text-base font-semibold text-zinc-100">{campaign.name}</h2>
-          <p className="mt-1 line-clamp-2 text-sm text-gray-400">{campaign.segment_description}</p>
+          <h2 className="truncate text-base font-semibold tracking-tight text-zinc-100">{campaign.name}</h2>
+          <p className="mt-1 line-clamp-2 text-sm text-[#8b8aa0]">{campaign.segment_description}</p>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-2">
-          <span className={`rounded-full border px-2.5 py-1 text-xs ${channelStyles[campaign.channel] || channelStyles.email}`}>
+          <span className={`rounded-full border px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${channelStyles[campaign.channel] || channelStyles.email}`}>
             {campaign.channel}
           </span>
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-gray-300">
+          <span className={`inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${campaign.status === 'running' ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-300' : campaign.status === 'completed' ? 'border-blue-500/20 bg-blue-500/10 text-blue-300' : 'border-gray-500/20 bg-gray-500/10 text-gray-300'}`}>
             <span className={`h-2 w-2 rounded-full ${statusStyles[campaign.status] || statusStyles.draft}`} />
             {campaign.status}
           </span>
@@ -111,7 +111,7 @@ export default function CampaignCard({ campaign }) {
         </div>
       )}
 
-      <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4 text-xs text-gray-500">
+      <div className="mt-5 flex items-center justify-between border-t border-white/6 pt-4 text-xs text-[#8b8aa0]">
         <span>Created {created}</span>
         <span>Open rate {openRate}%</span>
       </div>

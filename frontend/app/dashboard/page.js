@@ -98,7 +98,8 @@ export default function DashboardPage() {
 
   return (
     <main className="min-h-screen bg-[#080810] text-white">
-      <Navbar />
+      <div className="animate-fadeIn">
+        <Navbar />
 
       <section className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8">
         <div>
@@ -116,7 +117,8 @@ export default function DashboardPage() {
           {statCards.map((card) => (
             <article
               key={card.key}
-              className="rounded-xl border border-white/10 bg-white/5 p-5 shadow-2xl shadow-black/20 backdrop-blur transition hover:scale-[1.02]"
+              className="rounded-2xl border border-white/6 bg-[#0f0f1a] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.05)] backdrop-blur-xl transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.01] hover:border-white/10 hover:shadow-[0_8px_32px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,255,255,0.1)]"
+              style={card.valueClass.includes('emerald') ? { textShadow: '0 0 16px rgba(34,197,94,0.18)' } : card.valueClass.includes('amber') ? { textShadow: '0 0 16px rgba(245,158,11,0.18)' } : card.valueClass.includes('red') ? { textShadow: '0 0 16px rgba(239,68,68,0.18)' } : undefined}
             >
               <div className="text-2xl">{card.icon}</div>
               <div className={`mt-4 text-4xl font-black ${card.valueClass}`}>
@@ -128,7 +130,7 @@ export default function DashboardPage() {
           ))}
         </div>
 
-        <section className="overflow-hidden rounded-2xl border border-indigo-500/30 bg-gradient-to-r from-indigo-600/30 to-violet-600/30 p-6 shadow-2xl shadow-indigo-950/30 backdrop-blur md:p-8">
+        <section className="overflow-hidden rounded-3xl border border-indigo-500/25 bg-[linear-gradient(135deg,rgba(99,102,241,0.18),rgba(139,92,246,0.14))] p-6 shadow-[0_0_40px_rgba(99,102,241,0.08),inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-xl md:p-8">
           <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div>
               <span className="inline-flex rounded-full bg-indigo-500/20 px-3 py-1 text-sm font-semibold text-indigo-200">
@@ -144,7 +146,7 @@ export default function DashboardPage() {
                   <Link
                     key={suggestion}
                     href={`/chat?message=${encodeURIComponent(suggestion)}`}
-                    className="cursor-pointer rounded-full bg-white/10 px-4 py-2 text-sm text-white transition hover:bg-white/20"
+                    className="cursor-pointer rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm text-white transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-400/40 hover:bg-white/15 hover:shadow-[0_8px_20px_rgba(99,102,241,0.1)]"
                   >
                     {suggestion}
                   </Link>
@@ -153,14 +155,14 @@ export default function DashboardPage() {
 
               <Link
                 href="/chat"
-                className="mt-7 inline-flex rounded-xl bg-indigo-600 px-6 py-3 font-semibold text-white transition hover:bg-indigo-500"
+                className="mt-7 inline-flex rounded-xl bg-indigo-600 px-6 py-3 font-semibold text-white shadow-[0_0_18px_rgba(99,102,241,0.25)] transition-all duration-200 hover:bg-indigo-500 hover:shadow-[0_0_24px_rgba(99,102,241,0.35)] active:scale-[0.97]"
               >
                 Open Maya →
               </Link>
             </div>
 
             <div className="hidden lg:block">
-              <div className="ml-auto max-w-md rounded-2xl border border-white/10 bg-[#080810]/55 p-4 shadow-2xl backdrop-blur">
+              <div className="ml-auto max-w-md rounded-3xl border border-white/8 bg-[#0f0f1a] p-4 shadow-[0_10px_32px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,255,255,0.05)] backdrop-blur-xl">
                 <div className="mb-4 flex items-center gap-2 border-b border-white/10 pb-3">
                   <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
                   <span className="text-sm font-medium text-gray-300">Maya is online</span>
@@ -193,7 +195,7 @@ export default function DashboardPage() {
             {recentCampaigns.map((campaign) => (
               <article
                 key={campaign.id}
-                className="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur transition hover:scale-[1.02]"
+                className="rounded-2xl border border-white/6 bg-[#0f0f1a] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.05)] backdrop-blur-xl transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.01] hover:border-white/10 hover:shadow-[0_8px_32px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,255,255,0.1)]"
               >
                 <div className="flex items-start justify-between gap-3">
                   <h3 className="min-w-0 truncate text-base font-semibold text-white">{campaign.name}</h3>
@@ -226,6 +228,7 @@ export default function DashboardPage() {
           )}
         </section>
       </section>
+      </div>
     </main>
   );
 }

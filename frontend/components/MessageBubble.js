@@ -29,11 +29,12 @@ export default function MessageBubble({ message }) {
 
       <div className={`max-w-[86%] sm:max-w-[72%] ${isUser ? 'items-end' : 'items-start'} flex flex-col`}>
         <div
-          className={`rounded-2xl px-4 py-3 text-sm leading-6 shadow-sm ${
+          className={`rounded-2xl px-4 py-3 text-sm leading-6 shadow-sm transition-all duration-200 ${
             isUser
-              ? 'bg-[#6366f1] text-white'
-              : 'border border-white/10 bg-white/5 text-[#e5e5e5] backdrop-blur'
+              ? 'rounded-br-sm bg-indigo-600 text-white shadow-[0_2px_12px_rgba(99,102,241,0.25)]'
+              : 'rounded-bl-sm border border-white/6 bg-[#13131f] text-[#e8e7ff] shadow-[0_1px_4px_rgba(0,0,0,0.3)] backdrop-blur'
           }`}
+          style={isUser ? { boxShadow: '0 2px 12px rgba(99,102,241,0.25)' } : { boxShadow: '0 1px 4px rgba(0,0,0,0.3)' }}
         >
           <p className="whitespace-pre-wrap break-words">{message.content}</p>
         </div>
@@ -43,7 +44,7 @@ export default function MessageBubble({ message }) {
             {message.toolsUsed.map((tool, index) => (
               <span
                 key={`${tool}-${index}`}
-                className="rounded-full border border-indigo-800 bg-indigo-950 px-2 py-0.5 text-xs text-indigo-300"
+                className="rounded-full border border-indigo-800/40 bg-indigo-950/60 px-2.5 py-1 text-xs text-indigo-200 backdrop-blur-sm"
               >
                 {toolLabel(tool)}
               </span>

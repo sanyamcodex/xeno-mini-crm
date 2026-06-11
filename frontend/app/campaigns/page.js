@@ -83,7 +83,8 @@ export default function CampaignsPage() {
 
   return (
     <main className="min-h-screen bg-[#080810] text-white">
-      <Navbar />
+      <div className="animate-fadeIn">
+        <Navbar />
       <section className="px-4 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -117,7 +118,7 @@ export default function CampaignsPage() {
               <Link
                 key={chip.label}
                 href={chip.href}
-                className="inline-flex items-center rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-gray-100 transition hover:bg-white/10"
+                className="inline-flex items-center rounded-xl border border-white/8 bg-white/5 px-4 py-3 text-sm text-gray-100 transition-all duration-200 hover:-translate-y-0.5 hover:border-white/15 hover:bg-white/10 hover:shadow-[0_8px_20px_rgba(0,0,0,0.35)]"
               >
                 {chip.label}
               </Link>
@@ -146,7 +147,7 @@ export default function CampaignsPage() {
           </div>
 
           {!loading && !error && campaigns.length === 0 && (
-            <div className="mt-8 rounded-xl border border-dashed border-white/15 bg-white/5 px-6 py-12 text-center backdrop-blur">
+            <div className="mt-8 rounded-3xl border border-dashed border-white/12 bg-[#0f0f1a] px-6 py-12 text-center shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.05)] backdrop-blur-xl">
               <p className="text-base font-medium text-zinc-200">No campaigns yet. Ask Maya to create one!</p>
               <Link
                 href="/chat?message=Create%20a%20WhatsApp%20campaign%20for%20lapsed%20customers"
@@ -158,6 +159,7 @@ export default function CampaignsPage() {
           )}
         </div>
       </section>
+      </div>
     </main>
   );
 }
