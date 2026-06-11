@@ -85,7 +85,7 @@ export default function CampaignsPage() {
     <main className="min-h-screen bg-[#080810] text-white">
       <div className="animate-fadeIn">
         <Navbar />
-      <section className="px-4 py-8 sm:px-6 lg:px-8">
+      <section className="px-4 pt-16 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>

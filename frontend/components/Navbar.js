@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const links = [
   { href: '/dashboard', label: 'Dashboard' },
@@ -11,9 +12,52 @@ const links = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const [visible, setVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY < 10) {
+        setVisible(true);
+      } else if (currentScrollY < lastScrollY) {
+        setVisible(true);
+      } else {
+        setVisible(false);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    const handleMouseMove = (event) => {
+      if (event.clientY < 80) {
+        setVisible(true);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [lastScrollY]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/6 bg-[#080810]/80 backdrop-blur-xl">
+    <header
+      className="border-b border-white/6 bg-[#080810]/80 backdrop-blur-xl"
+      style={{
+        transform: visible ? 'translateY(0)' : 'translateY(-100%)',
+        transition: 'transform 0.3s ease',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 50
+      }}
+    >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/dashboard" className="flex items-center gap-2">
           <span

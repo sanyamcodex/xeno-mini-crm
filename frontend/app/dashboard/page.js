@@ -101,7 +101,7 @@ export default function DashboardPage() {
       <div className="animate-fadeIn">
         <Navbar />
 
-      <section className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8">
+      <section className="mx-auto flex max-w-7xl flex-col gap-8 px-4 pt-16 py-8 sm:px-6 lg:px-8">
         <div>
           <h1 className="text-3xl font-bold tracking-normal text-white">Good morning, StyleAura 👋</h1>
           <p className="mt-2 text-gray-400">Here&apos;s what&apos;s happening with your shoppers today.</p>
