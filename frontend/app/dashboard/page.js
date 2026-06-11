@@ -60,6 +60,16 @@ function openRate(campaign) {
   return Math.round((campaign.total_opened / campaign.total_delivered) * 100);
 }
 
+const getGreeting = () => {
+  const hour = new Date().getHours();
+
+  if (hour >= 5 && hour < 12) return 'Good morning';
+  if (hour >= 12 && hour < 17) return 'Good afternoon';
+  if (hour >= 17 && hour < 21) return 'Good evening';
+
+  return 'Working late';
+};
+
 export default function DashboardPage() {
   const [stats, setStats] = useState(null);
   const [campaigns, setCampaigns] = useState([]);
@@ -103,7 +113,7 @@ export default function DashboardPage() {
 
       <section className="mx-auto flex max-w-7xl flex-col gap-8 px-4 pt-16 py-8 sm:px-6 lg:px-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-normal text-white">Good morning, StyleAura 👋</h1>
+          <h1 className="text-3xl font-bold tracking-normal text-white">{`${getGreeting()}, StyleAura 👋`}</h1>
           <p className="mt-2 text-gray-400">Here&apos;s what&apos;s happening with your shoppers today.</p>
         </div>
 
