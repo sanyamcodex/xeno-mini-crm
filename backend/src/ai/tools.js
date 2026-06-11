@@ -38,7 +38,7 @@ const functionDeclarations = [
   },
   {
     name: 'create_campaign',
-    description: 'Create a new campaign for a customer segment',
+    description: 'Creates a NEW campaign. Only call this when the user explicitly wants to CREATE a new campaign, not when asking about existing ones.',
     parameters: {
       type: SchemaType.OBJECT,
       properties: {
