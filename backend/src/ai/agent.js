@@ -39,6 +39,24 @@ function sanitizeHistory(history = []) {
   return cleaned;
 }
 
+async function callWithRetry(fn, retries = 3, delayMs = 2000) {
+  for (let i = 0; i < retries; i += 1) {
+    try {
+      return await fn();
+    } catch (err) {
+      const isRetryable = err.status === 503 || err.status === 429;
+
+      if (isRetryable && i < retries - 1) {
+        console.log(`Gemini ${err.status}, retrying in ${delayMs}ms... (attempt ${i + 1})`);
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+        delayMs *= 2;
+      } else {
+        throw err;
+      }
+    }
+  }
+}
+
 async function runAgent(userMessage, conversationHistory = []) {
   if (!process.env.GEMINI_API_KEY) {
     return {
@@ -69,7 +87,7 @@ async function runAgent(userMessage, conversationHistory = []) {
   let result;
 
   try {
-    result = await chat.sendMessage(userMessage);
+    result = await callWithRetry(() => chat.sendMessage(userMessage));
   } catch (error) {
     console.error('Gemini request failed:', error);
 
@@ -77,6 +95,14 @@ async function runAgent(userMessage, conversationHistory = []) {
       return {
         reply:
           'Gemini API quota is exhausted for this key/project. The CRM backend and database are running, but Maya needs a Gemini API key with available quota before she can answer.',
+        toolsUsed
+      };
+    }
+
+    if (error.status === 503) {
+      return {
+        reply:
+          'Gemini is temporarily unavailable right now. Please try again in a moment.',
         toolsUsed
       };
     }
@@ -113,7 +139,7 @@ async function runAgent(userMessage, conversationHistory = []) {
     }
 
     try {
-      result = await chat.sendMessage(functionResponses);
+      result = await callWithRetry(() => chat.sendMessage(functionResponses));
     } catch (error) {
       console.error('Gemini tool response failed:', error);
 
@@ -121,6 +147,14 @@ async function runAgent(userMessage, conversationHistory = []) {
         return {
           reply:
             'Gemini API quota ran out while using CRM tools. The tool call completed locally, but Maya needs available Gemini quota to finish the response.',
+          toolsUsed
+        };
+      }
+
+      if (error.status === 503) {
+        return {
+          reply:
+            'Gemini is temporarily unavailable while Maya was finishing the CRM tool response. Please try again shortly.',
           toolsUsed
         };
       }
